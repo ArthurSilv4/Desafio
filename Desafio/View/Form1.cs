@@ -16,6 +16,7 @@ namespace Desafio
     public partial class Form1 : Form
     {
         private TarefaController controller = new TarefaController();
+        int media = 0;
 
         public Form1()
         {
@@ -73,7 +74,16 @@ namespace Desafio
 
             foreach (var tarefa in controller.ListarTarefas())
             {
-                ctTarefa.Series["Tarefas"].Points.AddXY(tarefa.Name, tarefa.Prioridade);
+                
+
+                if (tarefa.Name.Equals("Média"))
+                {
+                    media++;
+                }
+
+           
+
+                ctTarefa.Series["Tarefas"].Points.AddXY(tarefa.Prioridade, media);
             }
         }
     }
