@@ -53,18 +53,31 @@ namespace Desafio
         {
             var produto = (Produto)dataGridView1.CurrentRow.DataBoundItem;
 
-
-            using (var conn = new SqlConnection("Server=localhost\\SQLEXPRESS;Database=db_produto;" + "Integrated Security = True;"))
+            using (var conn = new SqlConnection("Server=localhost\\SQLEXPRESS;Database=db_produto;Integrated Security=True;"))
             {
                 conn.Open();
-                var cmd = new SqlCommand("INSERT INTO ListarFavoritos2 (IdProdutoApi, Title, Price, Category) VALUES (@Id, @Title, @Price, @Category)", conn);
-                cmd.Parameters.AddWithValue("@Id", produto.id);
-                cmd.Parameters.AddWithValue("@Title", produto.title);
-                cmd.Parameters.AddWithValue("@Price", produto.price);
-                cmd.Parameters.AddWithValue("@Category", produto.category);
-                cmd.ExecuteNonQuery();
+
+                // Verifica se já existe
+                var checkCmd = new SqlCommand("SELECT COUNT(*) FROM ListarFavoritos2 WHERE IdProdutoApi = @Id", conn);
+                checkCmd.Parameters.AddWithValue("@Id", produto.id);
+                int count = (int)checkCmd.ExecuteScalar();
+
+                if (count == 0)
+                {
+                    var cmd = new SqlCommand("INSERT INTO ListarFavoritos2 (IdProdutoApi, Title, Price, Category) VALUES (@Id, @Title, @Price, @Category)", conn);
+                    cmd.Parameters.AddWithValue("@Id", produto.id);
+                    cmd.Parameters.AddWithValue("@Title", produto.title);
+                    cmd.Parameters.AddWithValue("@Price", produto.price);
+                    cmd.Parameters.AddWithValue("@Category", produto.category);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Produto adicionado aos favoritos!");
+                }
+                else
+                {
+                    MessageBox.Show("Este produto já está nos favoritos.");
+                }
+
             }
-            
         }
 
         private void btnListarFavorito_Click(object sender, EventArgs e)
